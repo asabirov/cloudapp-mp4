@@ -18,14 +18,14 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 
 public class SuperTable {
-   private HTable hTable;
+   private static HTable hTable;
 
    public static void main(String[] args) throws IOException {
       // Instantiate Configuration class
-      Configuration con = HBaseConfiguration.create();
+      Configuration config = HBaseConfiguration.create();
 
       // Instaniate HBaseAdmin class
-      HBaseAdmin admin = new HBaseAdmin(con);
+      HBaseAdmin admin = new HBaseAdmin(config);
       
       // Instantiate table descriptor class
       HTableDescriptor tableDescriptor = new
@@ -56,7 +56,7 @@ public class SuperTable {
       scan.addColumn(Bytes.toBytes("personal"), Bytes.toBytes("hero"));
 
       // Get the scan result
-      ResultScanner scanner = table.getScanner(scan);
+      ResultScanner scanner = hTable.getScanner(scan);
 
       // Read values from scan result
       // Print scan result
@@ -71,7 +71,8 @@ public class SuperTable {
       hTable.close();
    }
 
-   private static void addRow(String row, String hero, String power, String name, String xp) {
+   private static void addRow(String row, String hero, String power, String name, String xp) throws java.io.InterruptedIOException, 
+	org.apache.hadoop.hbase.client.RetriesExhaustedWithDetailsException {
       Put p = new Put(Bytes.toBytes(row));
 
       p.add(Bytes.toBytes("personal"), Bytes.toBytes("hero"),Bytes.toBytes(hero));
